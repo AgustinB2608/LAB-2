@@ -1,0 +1,56 @@
+void punto3y4() {
+    ArchivoReparaciones archivoR("reparaciones.dat");
+    int cantReg = archivoR.contarRegistros();
+
+    if (cantReg <= 0) {
+        cout << "No hay registros." << endl;
+        return;
+    }
+
+    int tipo;
+    cout << "Ingrese el tipo de reparacion a filtrar: ";
+    cin >> tipo;
+
+    // Primera pasada para contar cuántos registros no coinciden con el tipo especificado
+    int contar = 0;
+    for (int i = 0; i < cantReg; i++) {
+        Reparaciones reg = archivoR.leerRegistro(i);
+        if (reg.getTipoReparacion() != tipo) {
+            contar++;
+        }
+    }
+
+    // Crear un array dinámico con el tamaño exacto necesario
+    Reparaciones *subtipos = new Reparaciones[contar];
+    if (subtipos == NULL) {
+        cout << "Error de asignacion de memoria." << endl;
+        return;
+    }
+
+    // Segunda pasada para llenar el array con los registros que no coinciden con el tipo especificado
+    int index = 0;
+    for (int i = 0; i < cantReg; i++) {
+        Reparaciones reg = archivoR.leerRegistro(i);
+        if (reg.getTipoReparacion() != tipo) {
+            subtipos[index++] = reg;
+        }
+    }
+
+    // Mostrar los registros filtrados
+    cout << "Registros que no son del tipo: " << tipo << endl;
+    for (int i = 0; i < contar; i++) {
+        cout << "Reparacion " << i + 1 << ":" << endl;
+        cout << "Codigo Taller: " << subtipos[i].getCodigoTaller() << endl;
+        cout << "Codigo Cliente: " << subtipos[i].getCodigoCliente() << endl;
+        cout << "Fecha de Reparacion: ";
+        subtipos[i].getFechaReparacion().MostrarFecha();
+        cout << "Tipo de Reparacion: " << subtipos[i].getTipoReparacion() << endl;
+        cout << "Importe: " << subtipos[i].getImporte() << endl;
+        cout << "Numero de Provincia: " << subtipos[i].getNumeroProvincia() << endl;
+        cout << "Estado: " << (subtipos[i].getEstado() ? "Activo" : "Inactivo") << endl;
+        cout << endl;
+    }
+
+    // Liberar la memoria asignada
+    delete[] subtipos;
+}
